@@ -9,27 +9,9 @@ options(scipen = "9999")
 brewing_materials <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-31/brewing_materials.csv')
 beer_taxed <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-31/beer_taxed.csv')
 beer_states <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-31/beer_states.csv')
-
 brewer_size <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-31/brewer_size.csv')
 
-head(brewing_materials)
 
-
-
-
-
-brewing_materials_filter <- brewing_materials %>% 
-  mutate(data_type = factor(data_type),
-         type = factor(type),
-         material_type = factor(material_type)) %>% 
-  group_by(type,year) %>% 
-  count(type,name = "type_count")
-
-
-
-brewing_materials_filter %>% 
-  group_by(type, year) %>% 
-  count(type)
 
 
 ####################
@@ -64,12 +46,12 @@ label_data$angle <- ifelse(label_data$angle_calc < (-90), label_data$angle_calc 
 
 text_y = -1600000
 
-beer_states %>% 
+gg_beer <- beer_states %>% 
   na.omit() %>% 
   
   mutate(state = factor(state),
          type = factor(type)) %>% 
-  filter(state != "total" & type == "On Premises", barrels != 0) %>% 
+  filter(state != "total" & type == "On Premises" & barrels != 0) %>% 
   # View()
   group_by(state) %>%
   summarise(total_barrel = sum(barrels)) %>% 
@@ -113,15 +95,11 @@ beer_states %>%
   theme(axis.title = element_blank(),
         axis.text = element_blank(),
         panel.grid = element_blank(),
-        panel.background = element_rect(fill = "#303030"),
+        panel.background = element_rect(fill = "#262626"),
         text = element_text(family = "Poppins ExtraLight"),
         legend.position = "none")
 
 
+ggsave (file = "beer_export.svg", plot = gg_beer, width = 8, height = 8)
 
 
-
-
-beer_states %>% 
-  na.omit() %>% 
-  filter(barrels > 10000000)
